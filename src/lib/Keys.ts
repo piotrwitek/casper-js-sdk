@@ -132,16 +132,17 @@ export abstract class AsymmetricKey {
    * Constructs an `AsymmetricKey` inherited object
    * @param {Uint8Array} publicKey An account's public key as a byte array
    * @param {Uint8Array} privateKey An account's private key as a byte array
-   * @param {SignatureAlgorithm} signatureAlgorithm The signature algorithm of the key. Currently supported are Ed25519 and Secp256k1
+   * @param {SignatureAlgorithm} signatureAlgorithm The signature algorithm of the key. Which can be derived from public key. This param is optional for backward compatibility.
    */
   constructor(
     publicKey: Uint8Array,
     privateKey: Uint8Array,
-    signatureAlgorithm: SignatureAlgorithm
+    signatureAlgorithm?: SignatureAlgorithm
   ) {
-    this.publicKey = new CLPublicKey(publicKey, signatureAlgorithm);
+    this.publicKey = CLPublicKey.fromHex(encodeBase16(publicKey));
     this.privateKey = privateKey;
-    this.signatureAlgorithm = signatureAlgorithm;
+    this.signatureAlgorithm =
+      signatureAlgorithm || this.publicKey.getSignatureAlgorithm();
   }
 
   /**
